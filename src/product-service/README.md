@@ -18,18 +18,10 @@ The app does not rely on any other services, so you can run it locally without a
 
 To run the app, clone the repo, open a terminal, and navigate to the `product-service` directory.
 
-If you are testing the proxy for ai-service, you will need to run the ai-service container then set the `AI_SERVICE_URL` environment variable to the URL of the ai-service.
+Optionally, set `PRODUCT_MAX_SIZE_BYTES` (default is 10 MB for product create/update payloads).
 
 ```bash
-export AI_SERVICE_URL=http://ai-service:5001/
-export AI_REQUEST_TIMEOUT_SECS=300 # optional; default is 300s for image-generation proxy calls
 export PRODUCT_MAX_SIZE_BYTES=10485760 # optional; default is 10 MB for product create/update payloads
-docker compose up
-```
-
-Then run the following command:
-
-```bash
 cargo run
 ```
 

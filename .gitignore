@@ -137,15 +137,10 @@ __pycache__/
 **/.DS_Store
 # .vscode
 # **/.vscode
-.azure
-.terraform
 test-results/
 playwright-report/
 playwright/.cache/
 .env.playwright.local
-
-# custom helm values
-custom-values.yaml
 
 # make binaries
 kind

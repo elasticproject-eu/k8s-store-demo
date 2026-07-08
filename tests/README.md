@@ -192,14 +192,6 @@ export COMPANY_NAME=Zava
 npm run test
 ```
 
-### Azure Developer CLI (azd) Integration
-The tests automatically load environment variables from azd:
-```bash
-# Load azd environment and run tests
-azd env get-values > .env
-npm run test
-```
-
 ## Quick Start
 
 ### Prerequisites
@@ -344,7 +336,7 @@ Centralized configuration providing:
 - Environment variable management with intelligent defaults
 - Helper methods for common test patterns and validations
 - Consistent URL and branding configuration across all test suites
-- Integration with existing azd and .env file patterns
+- Integration with existing .env file patterns
 
 ### `playwright.config.ts`
 Main Playwright configuration with:
@@ -427,9 +419,6 @@ echo $SERVICE_STORE_ADMIN_ENDPOINT_URL
 
 # Check configuration through test-config
 node -e "console.log(require('./test-config.js'))"
-
-# Load from azd if using Azure deployment
-azd env get-values
 ```
 
 #### Traffic Test Specific Issues

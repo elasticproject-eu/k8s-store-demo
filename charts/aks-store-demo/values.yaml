@@ -9,26 +9,6 @@ namespace: "dev"
 useRabbitMQ: true # when true, local rabbitmq container will be used
 useDocumentDB: true # when true, local documentdb container will be used
 
-useAzureAd: false # when true, Azure AD auth will be used for ai-service, order-service, and makeline-service
-managedIdentityName: "" # name of the Azure AD identity to use for the service account
-managedIdentityClientId: "" # client ID of the managed identity to use for the service account
-
-aiService:
-  # Specifies whether a ai-service deployment and service should be created
-  create: false
-  modelDeploymentName: ""
-  openAiEndpoint: ""
-  openAiKey: ""
-  openAiOrgId: ""
-  useAzureOpenAi: false
-  openAiImageEndpoint: ""
-  openAiImageModelName: ""
-  azureOpenAiApiVersion: "2024-12-01-preview"
-  azureOpenAiImageApiVersion: "2025-04-01-preview"
-  image:
-    repository: "ghcr.io/azure-samples/aks-store-demo/ai-service"
-    tag: "" # defaults to Chart.AppVersion
-
 orderService:
   queueHost: "rabbitmq"
   queuePort: "5672"
@@ -45,12 +25,10 @@ makelineService:
   orderQueuePassword: "password"
   orderQueueName: "orders"
   orderQueueHost: ""
-  orderDBApi: "mongodb"
   orderDBUri: "mongodb://documentdb:10260/?tls=true&tlsAllowInvalidCertificates=true"
   orderDBListConnectionStringsUrl: ""
   orderDBName: "orderdb"
   orderDBCollectionName: "orders"
-  orderDBContainerName: "orders"
   orderDBUsername: "username"
   orderDBPassword: "password"
   image:

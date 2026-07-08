@@ -9,13 +9,11 @@ spec:
     namespace: ""
     server: https://kubernetes.default.svc
   source:
-    path: kustomize/overlays/kaito
+    path: kustomize/base
     repoURL: https://github.com/azure-samples/aks-store-demo
     targetRevision: main
     kustomize:
       images:
-        - >-
-          ghcr.io/azure-samples/aks-store-demo/ai-service=ghcr.io/azure-samples/aks-store-demo/ai-service:2.2.0
         - >-
           ghcr.io/azure-samples/aks-store-demo/makeline-service=ghcr.io/azure-samples/aks-store-demo/makeline-service:2.2.0
         - >-
