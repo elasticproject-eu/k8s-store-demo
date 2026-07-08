@@ -45,13 +45,11 @@ test.describe('store-admin comprehensive tests', () => {
       await descriptionField.fill('Something tasty for the pups');
     }
 
-    // Save the product and wait for the dialog response
-    const dialogPromise = page.waitForEvent('dialog');
+    // Save the product and wait for redirect to the new product's detail page,
+    // which only happens after a successful save
     await page.getByRole('button', { name: 'Save Product' }).click();
-    const dialog = await dialogPromise;
-    console.log(`Dialog message: ${dialog.message()}`);
-    expect(dialog.message()).toBe('Product saved successfully');
-    await dialog.dismiss();
+    await page.waitForURL(/\/product\/.+/, { timeout: 30000 });
+    await expect(page.locator('.product-info h2')).toContainText('Super Snacks');
   });
 
   test('can view and manage products list', async ({ page }) => {
