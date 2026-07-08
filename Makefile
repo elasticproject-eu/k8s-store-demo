@@ -54,10 +54,10 @@ manifest: kustomize aks-store-all-in-one.yaml
 deploy: manifest ## Deploy to cluster
 	@kubectl apply -k .
 
-.PHONY: clean 
-clean: ## Delete kind cluster and kustomization.yaml
-	@if [ `kind get clusters | wc -l` -gt 0 ]; then \
-		kind delete cluster; \
+.PHONY: clean
+clean: $(KIND) ## Delete kind cluster and kustomization.yaml
+	@if [ `$(KIND) get clusters | wc -l` -gt 0 ]; then \
+		$(KIND) delete cluster; \
 	fi
 	@rm -f kustomization.yaml
 	@rm -rf $(LOCALBIN)
@@ -95,9 +95,10 @@ $(ENVTEST): $(LOCALBIN)
 
 .PHONY: kind
 kind: $(KIND) ## Download kind locally if necessary and create a new cluster. If wrong version is installed, it will be overwritten.
-$(KIND): $(LOCALBIN)
-	@test -s $(LOCALBIN)/kind && $(LOCALBIN)/kind --version | grep -q $(KIND_VERSION) || \
-	GOBIN=$(LOCALBIN) go install sigs.k8s.io/kind@$(KIND_VERSION)
 	@if [ `$(KIND) get clusters | wc -l` -eq 0 ]; then \
 		$(KIND) create cluster; \
 	fi
+
+$(KIND): $(LOCALBIN)
+	@test -s $(LOCALBIN)/kind && $(LOCALBIN)/kind --version | grep -q $(KIND_VERSION) || \
+	GOBIN=$(LOCALBIN) go install sigs.k8s.io/kind@$(KIND_VERSION)
