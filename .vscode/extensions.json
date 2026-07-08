@@ -8,13 +8,8 @@
 		"golang.go",
 		"Vue.volar",
 		"rust-lang.rust-analyzer",
-		"ms-python.python",
-		"ms-kubernetes-tools.vscode-aks-tools",
-		"ms-azuretools.vscode-bicep",
-		"hashicorp.terraform",
 		"ms-playwright.playwright",
 		"redhat.vscode-yaml",
-		"ms-azuretools.vscode-azureresourcegroups",
 		"ms-vscode-remote.remote-containers"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.

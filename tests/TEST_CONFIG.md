@@ -84,9 +84,8 @@ await expect(page).toHaveTitle(testConfig.getExpectedAdminTitle());
 
 The configuration automatically loads environment variables from multiple sources in this priority order:
 
-1. **Azure Developer CLI (azd)** - Highest priority
-2. **Local .env file** - Lower priority
-3. **Default values** - Fallback
+1. **Local .env file** - Higher priority
+2. **Default values** - Fallback
 
 This is handled by the existing `load-env.js` module which the test configuration uses internally.
 
@@ -107,7 +106,7 @@ This is handled by the existing `load-env.js` module which the test configuratio
 3. **Type Safety** - TypeScript definitions for better IntelliSense
 4. **Helper Methods** - Reusable patterns for common checks
 5. **Maintainability** - Easy to update configuration for all tests
-6. **Environment Integration** - Seamless integration with existing azd and .env patterns
+6. **Environment Integration** - Seamless integration with existing .env patterns
 
 ## Migration
 

@@ -2,7 +2,7 @@
 
 ## Architecture
 
-This is a polyglot microservices demo app for Azure Kubernetes Service (AKS). Services communicate via RabbitMQ (order queue) and persist data in DocumentDB (MongoDB-compatible).
+This is a polyglot microservices demo app for Kubernetes. Services communicate via RabbitMQ (order queue) and persist data in DocumentDB (MongoDB-compatible).
 
 **Services and their tech stacks:**
 
@@ -13,7 +13,6 @@ This is a polyglot microservices demo app for Azure Kubernetes Service (AKS). Se
 | product-service | Rust / Actix-web | 3002 | CRUD for product catalog |
 | store-front | Vue 3 / Vite / TypeScript | 8080 | Customer-facing web app |
 | store-admin | Vue 3 / Vite / TypeScript | 8081 | Employee web app for order/product management |
-| ai-service | Python / FastAPI | 5001 | Generative AI for product descriptions/images |
 | virtual-customer | Rust | - | Simulates order creation |
 | virtual-worker | Rust | - | Simulates order completion |
 
@@ -45,9 +44,6 @@ cd src/product-service && cargo run
 
 # store-front or store-admin
 cd src/store-front && npm install && npm run dev
-
-# ai-service
-cd src/ai-service && pip install -r requirements.txt && uvicorn main:app --reload --port 5001
 ```
 
 ### Build all container images
@@ -82,14 +78,6 @@ cd src/product-service
 cargo test
 ```
 
-### ai-service
-
-```bash
-cd src/ai-service
-pytest
-pylint main.py routers/
-```
-
 ### End-to-end tests (root-level)
 
 ```bash
@@ -104,14 +92,6 @@ These tests require the app to be running and need configuration via environment
 
 ## Deployment
 
-### Azure Developer CLI (azd)
-
-```bash
-azd up    # provisions infrastructure and deploys
-```
-
-Infrastructure is defined in `infra/terraform` (default) or `infra/bicep`. The `azure.yaml` file configures the azd workflow with hooks in `azd-hooks/`.
-
 ### Kubernetes manifests
 
 - `aks-store-quickstart.yaml` - minimal deployment
@@ -123,7 +103,6 @@ Infrastructure is defined in `infra/terraform` (default) or `infra/bicep`. The `
 
 ```bash
 make local    # build images, load into kind, deploy via kustomize
-make azure    # provision Azure resources and deploy
 make help     # list all targets
 ```
 
@@ -135,4 +114,3 @@ make help     # list all targets
 - Prettier is configured at root (`.prettierrc.json`) and used by both Vue apps.
 - HTTP test files (`test-*.http`) exist in each backend service directory for manual API testing.
 - Environment variables configure service connections (see `.env` files and docker-compose).
-- The `ai-service` is optional; the app functions without it.

@@ -6,7 +6,6 @@
  * for use in VS Code settings or other configurations
  */
 
-const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -32,50 +31,8 @@ function loadDotEnv() {
   return env;
 }
 
-function loadAzdEnv() {
-  const env = {};
-  
-  try {
-    // Check if azd is available
-    execSync('which azd', { stdio: 'ignore' });
-    
-    // Change to project root directory (parent of tests directory)
-    const projectRoot = path.join(__dirname, '..');
-    
-    // Get azd environment variables from project root
-    const output = execSync('azd env get-values', { 
-      encoding: 'utf8',
-      cwd: projectRoot
-    });
-    const lines = output.split('\n');
-    
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith('#')) {
-        const [key, ...valueParts] = trimmed.split('=');
-        if (key && valueParts.length > 0) {
-          env[key.trim()] = valueParts.join('=').trim().replace(/^["']|["']$/g, '');
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Warning: Could not load azd environment variables:', error.message);
-  }
-  
-  return env;
-}
-
 function mergeEnvironments() {
-  // Load .env file first (lower priority)
-  const dotEnv = loadDotEnv();
-  
-  // Load azd environment (higher priority)
-  const azdEnv = loadAzdEnv();
-  
-  // Merge environments (azd overrides .env)
-  const merged = { ...dotEnv, ...azdEnv };
-  
-  return merged;
+  return loadDotEnv();
 }
 
 function main() {
@@ -108,4 +65,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { loadDotEnv, loadAzdEnv, mergeEnvironments };
+module.exports = { loadDotEnv, mergeEnvironments };

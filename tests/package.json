@@ -10,8 +10,6 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@azure/identity": "^4.13.0",
-    "@azure/playwright": "^1.1.0",
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.16.5"
   },
