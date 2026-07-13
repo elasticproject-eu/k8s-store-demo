@@ -1,0 +1,815 @@
+# AKS Store Demo — Distributed attestation deployment
+
+# ── documentdb (TCP backend, :10260) ─────────────────────────────────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: documentdb
+spec:
+  serviceName: documentdb-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: documentdb }
+  template:
+    metadata:
+      labels: { app: documentdb }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster documentdb
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: documentdb
+          image: 130.233.195.35:5000/documentdb-local@sha256:7217b1dfcd2fd8b97e1a15153ff90e838b382bc4b33bf5d33d89b6f094b12f7a
+          imagePullPolicy: Always
+          # Need to run as root, since otherwise it seems like it cannot start
+          securityContext: { runAsUser: 0, runAsGroup: 0 }
+          args: ["--username", "username", "--password", "password"]
+          ports: [{ containerPort: 10260 }]
+          resources:
+            requests: { cpu: 5m, memory: 75Mi }
+            limits: { cpu: 1000m, memory: 768Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - { name: envoy-config, configMap: { name: envoy-config-documentdb } } # TCP template, app port 10260
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: documentdb-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: documentdb }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: documentdb }
+spec:
+  type: ClusterIP
+  selector: { app: documentdb }
+  ports:
+    - { name: mtls, port: 10260, targetPort: 15006 }
+
+
+# ── rabbitmq (TCP backend, :5672) ─────────────────────────────────────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+spec:
+  serviceName: rabbitmq-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: rabbitmq }
+  template:
+    metadata:
+      labels: { app: rabbitmq }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          imagePullPolicy: Always
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster rabbitmq
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: rabbitmq
+          image: 130.233.195.35:5000/rabbitmq@sha256:174d4359f756f007857cf382b683753277f1e87b272c65d672bc7ed89e8e397a
+          ports: [{ containerPort: 5672, name: rabbitmq-amqp }]
+          env:
+            - { name: RABBITMQ_DEFAULT_USER, value: "username" }
+            - { name: RABBITMQ_DEFAULT_PASS, value: "password" }
+            # Pin the Erlang node to loopback so epmd/distribution self-traffic
+            # stays on 127.0.0.1 (exempt from the mesh redirect). Without this,
+            # RabbitMQ connects to its own pod IP for the node, gets redirected
+            # into Envoy's mTLS, and fails to start. Single-node only.
+            - { name: RABBITMQ_NODENAME, value: "rabbit@localhost" }
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { cpu: 400m, memory: 384Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - { name: envoy-config, configMap: { name: envoy-config-rabbitmq } } # TCP template, app port 5672
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: rabbitmq-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: rabbitmq }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: rabbitmq }
+spec:
+  type: ClusterIP
+  selector: { app: rabbitmq }
+  ports:
+    - { name: mtls, port: 5672, targetPort: 15006 }
+
+
+# ── order-service (HTTP, :3000) ───────────────────────────────────────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: order-service
+spec:
+  serviceName: order-service-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: order-service }
+  template:
+    metadata:
+      labels: { app: order-service }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster order-service
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: order-service
+          imagePullPolicy: Always
+          image: 130.233.195.35:5000/order-service@sha256:d7da06f86809c3581d07f53afce47200b607a802885a76d63d8bb59a26667765
+          ports: [{ containerPort: 3000 }]
+          env:
+            - { name: ORDER_QUEUE_HOSTNAME, value: "rabbitmq" }
+            - { name: ORDER_QUEUE_PORT, value: "5672" }
+            - { name: ORDER_QUEUE_USERNAME, value: "username" }
+            - { name: ORDER_QUEUE_PASSWORD, value: "password" }
+            - { name: ORDER_QUEUE_NAME, value: "orders" }
+            - { name: FASTIFY_ADDRESS, value: "0.0.0.0" }
+          resources:
+            requests: { cpu: 10m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 128Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - {
+            name: envoy-config,
+            configMap: { name: envoy-config-order-service },
+          } # HTTP template, app port 3000
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: order-service-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: order-service }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: order-service }
+spec:
+  type: ClusterIP
+  selector: { app: order-service }
+  ports:
+    - { name: mtls, port: 3000, targetPort: 15006 }
+
+
+# ── makeline-service (HTTP, :3001) ────────────────────────────────────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: makeline-service
+spec:
+  serviceName: makeline-service-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: makeline-service }
+  template:
+    metadata:
+      labels: { app: makeline-service }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster makeline-service
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: makeline-service
+          image: 130.233.195.35:5000/makeline-service@sha256:910b112555300d5221751dc3aa570444b12bbb0806fb35c8409f4cf57243e5aa
+          ports: [{ containerPort: 3001 }]
+          env:
+            - { name: ORDER_QUEUE_URI, value: "amqp://rabbitmq:5672" }
+            - { name: ORDER_QUEUE_USERNAME, value: "username" }
+            - { name: ORDER_QUEUE_PASSWORD, value: "password" }
+            - { name: ORDER_QUEUE_NAME, value: "orders" }
+            - {
+                name: ORDER_DB_URI,
+                value: "mongodb://documentdb:10260/?tls=true&tlsAllowInvalidCertificates=true",
+              }
+            - { name: ORDER_DB_NAME, value: "orderdb" }
+            - { name: ORDER_DB_COLLECTION_NAME, value: "orders" }
+            - { name: ORDER_DB_USERNAME, value: "username" }
+            - { name: ORDER_DB_PASSWORD, value: "password" }
+          resources:
+            requests: { cpu: 10m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 128Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - {
+            name: envoy-config,
+            configMap: { name: envoy-config-makeline-service },
+          } # HTTP template, app port 3001
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: makeline-service-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: makeline-service }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: makeline-service }
+spec:
+  type: ClusterIP
+  selector: { app: makeline-service }
+  ports:
+    - { name: mtls, port: 3001, targetPort: 15006 }
+
+
+# ── product-service (HTTP, :3002) ─────────────────────────────────────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: product-service
+spec:
+  serviceName: product-service-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: product-service }
+  template:
+    metadata:
+      labels: { app: product-service }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster product-service
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: product-service
+          image: 130.233.195.35:5000/product-service@sha256:5ab8aa13851d052d009f116eff70d8551fa26c848f5cfda5dcb059660124c969
+          ports: [{ containerPort: 3002 }]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - {
+            name: envoy-config,
+            configMap: { name: envoy-config-product-service },
+          } # HTTP template, app port 3002
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: product-service-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: product-service }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: product-service }
+spec:
+  type: ClusterIP
+  selector: { app: product-service }
+  ports:
+    - { name: mtls, port: 3002, targetPort: 15006 }
+
+
+# ── store-front (frontend, HTTP :8080; external via TLS listener) ─────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: store-front
+spec:
+  serviceName: store-front-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: store-front }
+  template:
+    metadata:
+      labels: { app: store-front }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster store-front
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: store-front
+          image: 130.233.195.35:5000/store-front@sha256:6768ac28c10d09556fd45868b87f66c3642608f4939376ef9f810aeb5af237cf
+          ports: [{ containerPort: 8080, name: store-front }]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { cpu: 200m, memory: 128Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - { name: envoy-config, configMap: { name: envoy-config-store-front } } # HTTP template, app port 8080
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: store-front-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: store-front }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: store-front }
+spec:
+  type: LoadBalancer
+  selector: { app: store-front }
+  ports:
+    - { name: preflight, port: 9090, targetPort: 9090 }
+    - { name: external-tls, port: 443, targetPort: 9443 }
+
+
+# ── store-admin (frontend, HTTP :8081; external via TLS listener) ─────────────
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: store-admin
+spec:
+  serviceName: store-admin-protocol-service
+  replicas: 1
+  selector:
+    matchLabels: { app: store-admin }
+  template:
+    metadata:
+      labels: { app: store-admin }
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-tdx
+        io.katacontainers.config.hypervisor.cc_init_data: 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
+        io.katacontainers.config.hypervisor.kernel_params: >-
+          agent.guest_components_rest_api=all
+          agent.insecure_130.233.195.35:5000=130.233.195.35:5000
+    spec:
+      enableServiceLinks: false
+      runtimeClassName: kata-qemu-tdx
+      securityContext: { fsGroup: 1337 }
+      initContainers:
+        - name: iptables-init
+          image: 130.233.195.35:5000/iptables-init@sha256:a33779d0e8e49bd4a65debae3b6833da4d090a2be0d24064014159889be94e67
+          securityContext:
+            { capabilities: { add: ["NET_ADMIN"] }, runAsNonRoot: false }
+          resources:
+            requests: { cpu: 5m, memory: 16Mi }
+            limits: { cpu: 50m, memory: 32Mi }
+      containers:
+        - name: peer
+          image: 130.233.195.35:5000/p2p-attestation@sha256:9641c0adcdf686cfab28881d06f9257215046488c3a34b7c6fcc77c55a96a238
+          command: ["./peer"]
+          args: ["--id=$(POD_NAME)"]
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+            - name: REST_PORT
+              value: "8888"
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 150m, memory: 128Mi }
+          ports: [{ containerPort: 5001 }, { containerPort: 8443 }]
+          volumeMounts:
+            - { name: config-dir, mountPath: /app/config, readOnly: true }
+            - { name: certs-vol, mountPath: /certs }
+        - name: envoy
+          image: 130.233.195.35:5000/envoy@sha256:e5e530a61bb1ce655fa4a8ec567497112fcad296cb40ef00382ac575e8bd5e64
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until (exec 3<>/dev/tcp/127.0.0.1/8888 &&
+                     printf "GET /.well-known/attestation HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n" >&3 &&
+                     read -r line <&3 && exec 3>&- &&
+                     [[ "$line" == *"200"* ]]) 2>/dev/null; do
+                echo "[envoy] waiting for attestation..."; sleep 2
+              done
+              exec envoy -c /etc/envoy/envoy.yaml --service-node "$POD_NAME" --service-cluster store-admin
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          securityContext: { runAsUser: 1337, runAsGroup: 1337 }
+          resources:
+            requests: { cpu: 30m, memory: 64Mi }
+            limits: { cpu: 300m, memory: 128Mi }
+          ports:
+            [
+              { containerPort: 9090 },
+              { containerPort: 9443 },
+              { containerPort: 15006 },
+              { containerPort: 15001 },
+              { containerPort: 9901 },
+            ]
+          volumeMounts:
+            - { name: envoy-config, mountPath: /etc/envoy, readOnly: true }
+            - { name: certs-vol, mountPath: /certs, readOnly: true }
+        - name: store-admin
+          image: 130.233.195.35:5000/store-admin@sha256:ab910e069154efc679a56bee0081a8d00e7b393ba5a8e2ac00afe99b4865da56
+          ports: [{ containerPort: 8081, name: store-admin }]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { cpu: 200m, memory: 128Mi }
+      volumes:
+        - { name: config-dir, configMap: { name: shared-config } }
+        - { name: envoy-config, configMap: { name: envoy-config-store-admin } } # HTTP template, app port 8081
+        - { name: certs-vol, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: store-admin-protocol-service }
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: { app: store-admin }
+  ports: [{ port: 5001 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: store-admin }
+spec:
+  type: LoadBalancer
+  selector: { app: store-admin }
+  ports:
+    - { name: preflight, port: 9090, targetPort: 9090 }
+    - { name: external-tls, port: 443, targetPort: 9443 }
