@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shared-config
+data:
+  nodes.json: |
+    {
+      "components": {
+        "documentdb-0": {
+          "host": "documentdb-0.documentdb-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "rabbitmq-0": {
+          "host": "rabbitmq-0.rabbitmq-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "order-service-0": {
+          "host": "order-service-0.order-service-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "makeline-service-0": {
+          "host": "makeline-service-0.makeline-service-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "product-service-0": {
+          "host": "product-service-0.product-service-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "store-front-0": {
+          "host": "store-front-0.store-front-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        },
+        "store-admin-0": {
+          "host": "store-admin-0.store-admin-protocol-service.aks-demo.svc.cluster.local",
+          "port": 5001
+        }
+      }
+    }
