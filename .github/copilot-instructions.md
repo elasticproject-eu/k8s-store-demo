@@ -94,10 +94,8 @@ These tests require the app to be running and need configuration via environment
 
 ### Kubernetes manifests
 
-- `aks-store-quickstart.yaml` - minimal deployment
 - `aks-store-all-in-one.yaml` - full deployment with all services
-- `charts/aks-store-demo/` - Helm chart
-- `kustomize/` - Kustomize overlays
+- `aks-store-all-in-one-confidential.yaml` - confidential-computing/remote-attestation deployment
 
 ### Makefile targets
 
